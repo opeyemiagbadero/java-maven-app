@@ -31,7 +31,12 @@ pipeline {
         stage('Deploy') {
             steps {
                 // Your deployment steps go here
-                echo 'Deploying the application...'
+          stage('Test') {
+            steps {
+                // Your test steps go here
+                echo 'Testing...'
+            }
+        }      echo 'Deploying the application...'
             }
         }
     }
@@ -42,5 +47,6 @@ pipeline {
         failure {
             echo 'Pipeline failed! Send notifications, etc.'
         }
+    }
     }
 }
