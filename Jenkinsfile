@@ -1,49 +1,61 @@
 #!/usr/bin/env groovy
 
-@Library('jenkins-shared-library')
-def gv
-
 pipeline {
     agent any
     tools {
         maven 'maven-3.6'
     }
+    
+    
     stages {
-        stage ("init") {
+        stage('increment version') {
             steps {
-                // groovy script initialization
                 script {
-                    gv = load "script.groovy"
-                }
-            }
-        }
-        stage('build jar') {
-            steps {
-                // Your build steps go here
-                script {
-                    buildJar()
-
+                    echo 'incrementing the app version...'
+                    sh 'mvn build-helper:parse-version versions:set \
+                        -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} \
+                        versions:commit'
+                    def matcher = readfile('pom.xml') =~ '<version>(.+)</version>'
+                    def version = matcher[0][1]
+                    env.IMAGE_NAME = "$version-$BUILD_NUMBER" 
                 }
             }
         }
 
-        stage('build image') {
-    steps {
-        script {
-            buildImage()
+        stage('Build app') {
+            steps {
+                script {
+                    echo 'Building the application...'
+                    sh 'mvn clean package'
+                }
+            }
         }
-    }
-}
+
+        stage('Build image') {
+            steps {
+                script {
+                    echo 'Building the Docker image...'
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                        sh """
+                            docker build -t opeyemiagbadero/demo-app:${IMAGE_NAME} .
+                            echo \${PASSWORD} | docker login -u \${USERNAME} --password-stdin
+                            docker push opeyemiagbadero/demo-app:${IMAGE_NAME}
+                        """
+                    }
+                }
+            }
+        }
 
         stage('Deploy') {
             steps {
-                // Your deployment steps go here
                 script {
-                    gv.deployApp()
-                }              
+                    echo 'deploying the docker image to EC2...'
+                
+                }
             }
         }
     }
+
     post {
         success {
             echo 'Pipeline succeeded! Send notifications, etc.'
