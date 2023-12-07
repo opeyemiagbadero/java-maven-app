@@ -1,55 +1,36 @@
 #!/usr/bin/env groovy
 
-@Library('jenkins-shared-library')
-def gv
-
 pipeline {
     agent any
-    tools {
-        maven 'maven-3.6'
-    }
     stages {
-        stage ("init") {
+        
+        stage('test') {
             steps {
-                // groovy script initialization
                 script {
-                    gv = load "script.groovy"
+                    echo "testing the application..."
+                }
+            
+            }
+        }
+        
+        stage('build') {
+            steps {
+                script {
+                    echo "building the application..."
                 }
             }
         }
-        stage('build jar') {
-            steps {
-                // Your build steps go here
-                script {
-                    buildJar()
-
-                }
-            }
-        }
-
-        stage('build image') {
-    steps {
-        script {
-            buildImage()
-        }
-    }
-}
-
+        
         stage('Deploy') {
             steps {
-                // Your deployment steps go here
                 script {
-                    gv.deployApp()
-                }              
+                    def dockerCmd = 'docker run -p 3080:3080 -d opeyemiagbadero/demo-app:1.0'
+                    sshagent(['ec2-server-key']) {
+                         sh "ssh -o StrictHostKeyChecking=no ec2-user@13.43.189.171 ${dockerCmd}"
+                    }
+                }
+                
             }
-        }
-    }
-    post {
-        success {
-            echo 'Pipeline succeeded! Send notifications, etc.'
-        }
-        failure {
-            echo 'Pipeline failed! Send notifications, etc.'
         }
     }
 }
