@@ -57,8 +57,4 @@ pipeline {
             echo 'Pipeline failed! Send notifications, etc.'
         }
     }
-}lure {
-            echo 'Pipeline failed! Send notifications, etc.'
-        }
-    }
 }
