@@ -1,11 +1,6 @@
 #!/usr/bin/env groovy
 
-library identifier: 'jenkins-shared-library@master', retriever:modernSCM(
-        [$class: 'GitSCMSource'
-         remote: 'https://github.com/opeyemiagbadero/java-maven-app.git',
-         credentialsId: 'github-credentials'
-         ]
-)
+@Library('jenkins-shared-library')
 def gv
 
 pipeline {
@@ -32,10 +27,13 @@ pipeline {
             }
         }
 
-        stage('build image') {
+        stage('build and push image') {
     steps {
         script {
-            buildImage()
+            buildImage 'opeyemiagbadero/demo-app:jma-5.0'
+            dockerLogin()
+            dockerPush 'opeyemiagbadero/demo-app:jma-5.0'
+
         }
     }
 }
