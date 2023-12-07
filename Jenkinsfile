@@ -1,11 +1,6 @@
-#!/usr/bin/env groovy
+#!/usr/binn/env groovy
 
-library identifier: 'jenkins-shared-library@master', retriever:modernSCM(
-        [$class: 'GitSCMSource'
-         remote: 'https://github.com/opeyemiagbadero/java-maven-app.git',
-         credentialsId: 'github-credentials'
-         ]
-)
+@Library('jenkins-shared-library')
 def gv
 
 pipeline {
@@ -16,7 +11,7 @@ pipeline {
     stages {
         stage ("init") {
             steps {
-                // groovy script initialization
+                // groovy script initialiation
                 script {
                     gv = load "script.groovy"
                 }
@@ -26,16 +21,15 @@ pipeline {
             steps {
                 // Your build steps go here
                 script {
-                    buildJar()
-
+                    gv.buildJar()  
                 }
             }
         }
 
         stage('build image') {
     steps {
-        script {
-            buildImage()
+        script {                     
+           gv.buildImage()
         }
     }
 }
