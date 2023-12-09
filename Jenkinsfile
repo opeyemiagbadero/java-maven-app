@@ -1,35 +1,48 @@
 #!/usr/bin/env groovy
 
+@Library('jenkins-shared-library') _
+
+def gv
+
 pipeline {
     agent any
+    tools {
+        maven 'maven-3.6'
+    }
+    environment {
+        IMAGE_NAME = 'opeyemiagbadero/demo-app:jma-3.0'
+    }
     stages {
-        
-        stage('test') {
+        stage('Build App') {
             steps {
+                // Your build steps go here
                 script {
-                    echo "testing the application..."
-                }
-            
-            }
-        }
-        
-        stage('build') {
-            steps {
-                script {
-                    echo "building the application..."
+                    echo 'Building application jar....'
+                    buildJar()
                 }
             }
         }
-        
+
+        stage('Build Image') {
+            steps {
+                script {
+                    echo 'building Docker image ...'
+                    buildImage(env.IMAGE_NAME)
+                    dockerLogin()
+                    dockerPush(env.IMAGE_NAME)
+                }
+            }
+        }
+
         stage('Deploy') {
             steps {
                 script {
-                    def dockerCmd = 'docker run -p 3080:3080 -d opeyemiagbadero/demo-app:1.0'
+                    echo 'Deploying Docker image to EC2...'
+                    def dockerCmd = "docker run -p 8080:8080 -d ${IMAGE_NAME}"
                     sshagent(['ec2-server-key']) {
-                         sh "ssh -o StrictHostKeyChecking=no ec2-user@13.40.47.143 ${dockerCmd}"
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@3.8.171.41 ${dockerCmd}"
                     }
                 }
-                
             }
         }
     }
