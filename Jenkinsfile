@@ -57,7 +57,7 @@ pipeline {
         stage('commit version update') {
             steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'jenkins-ssh', keyFileVariable: 'ssh_key_credential')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'busola-jenkins', keyFileVariable: 'ssh_key_credential')]) {
                         sh 'git config --global user.email "jenkins@example.com"'
                         sh 'git config --global user.name "jenkins"'
 
