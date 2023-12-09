@@ -10,7 +10,7 @@ pipeline {
         maven 'maven-3.6'
     }
     environment {
-        IMAGE_NAME = 'opeyemiagbadero/demo-app:jma-3.0'
+        IMAGE_NAME = 'opeyemiagbadero/demo-app:jma-5.0'
     }
     stages {
         stage('Build App') {
