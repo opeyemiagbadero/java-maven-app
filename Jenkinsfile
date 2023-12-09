@@ -37,11 +37,11 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    echo 'Deploying Docker image to EC2...'
+                    echo 'deploying Docker image to EC2...'
                     def dockerComposeCmd = "docker-compose -f docker-compose.yaml up --detach"
                     sshagent(['ec2-server-key']) {
                         sh "scp docker-compose.yaml ec2-user@3.8.171.41:/home/ec2-user"
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@3.8.171.41 ${dockerCmd}"
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@3.8.171.41 ${dockerComposeCmd}"
                     }
                 }
             }
