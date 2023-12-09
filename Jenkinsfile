@@ -5,26 +5,22 @@ pipeline {
     tools {
         maven 'maven-3.6'
     }
-    
-    
+
     stages {
-        
-        
         stage('increment version') {
             steps {
                 script {
                     echo 'incrementing the app version...'
-                    sh 'mvn build-helper:parse-version versions:set \
-                        -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} \
-                        versions:commit'
+                    sh 'mvn build-helper:parse-version versions:set ' +
+                       '-DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} ' +
+                       'versions:commit'
                     def matcher = readFile('pom.xml') =~ '<version>(.+)</version>'
                     def version = matcher[0][1]
-                    env.IMAGE_NAME = "$version-$BUILD_NUMBER" 
+                    env.IMAGE_NAME = "${version}-${BUILD_NUMBER}"
                 }
             }
         }
 
-        
         stage('Build app') {
             steps {
                 script {
@@ -53,28 +49,25 @@ pipeline {
             steps {
                 script {
                     echo 'deploying the docker image to EC2...'
-                
+                    // Your deployment steps go here
                 }
             }
         }
+
         stage('commit version update') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'github-credentials', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                        sh """
+                        sh 'git config --global user.email "jenkins@example.com"'
+                        sh 'git config --global user.name "jenkins"'
 
-                            git config --global user.email jenkins@example.com
-                            git config --global user.name jenkins
+                        sh 'git status'
+                        sh 'git branch'
+                        sh 'git config --list'
 
-                            git status
-                            git branch
-                            git config --list
-
-                            git remote set-url origin https://\${USERNAME}:\${PASSWORD}@github.com/opeyemiagbadero/java-maven-app.git
-                            git add .
-                            git commit -m ci:version bump
-                            git push origin HEAD:versioning-jenkins
-                        """
+                        sh "git remote set-url origin https://\${USERNAME}:\${PASSWORD}@github.com/opeyemiagbadero/java-maven-app.git"
+                        sh 'git add .'
+                        sh 'git commit -m "ci:version bump"'
                     }
                 }
             }
