@@ -10,7 +10,7 @@ pipeline {
         maven 'maven-3.6'
     }
     environment {
-        IMAGE_NAME = 'opeyemiagbadero/demo-app:jma-5.0'
+        IMAGE_NAME = 'opeyemiagbadero/demo-app:jma-10.0'
     }
     stages {
         stage('Build App') {
@@ -38,7 +38,7 @@ pipeline {
             steps {
                 script {
                     echo 'deploying Docker image to EC2...'
-                    def shellCmd = "bash ./server-cmds.sh"
+                    def shellCmd = "bash ./server-cmds.sh ${IMAGE_NAME}"
                     sshagent(['ec2-server-key']) {
                         sh "scp server-cmds.sh ec2-user@3.8.171.41:/home/ec2-user"
                         sh "scp docker-compose.yaml ec2-user@3.8.171.41:/home/ec2-user"
