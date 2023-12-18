@@ -63,8 +63,7 @@ pipeline {
 
                         sh 'git status'
                         sh 'git branch'
-                        sh 'git config --list'
-
+                        
                         sh 'git remote set-url origin git@github.com:opeyemiagbadero/java-maven-app.git'
                         sh 'git add .'
                         sh 'git commit -m "ci:version bump-confirm"'
