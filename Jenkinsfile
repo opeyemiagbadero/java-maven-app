@@ -1,4 +1,3 @@
-
 #!/usr/bin/env groovy
 
 @Library('jenkins-shared-library') _
@@ -44,6 +43,7 @@ pipeline {
                 }
             }
         }
+
         stage('Deploy') {
             steps {
                 script {
