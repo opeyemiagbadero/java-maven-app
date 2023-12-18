@@ -49,7 +49,7 @@ pipeline {
             steps {
                 script {
                     echo 'deploying the docker image to EC2...'
-                    // Your deployment steps go here
+                    
                 }
             }
         }
