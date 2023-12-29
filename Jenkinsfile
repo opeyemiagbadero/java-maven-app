@@ -25,7 +25,7 @@ pipeline {
             }
             steps {
                 script {
-                    echo 'Deploying docker image ...'
+                    echo 'Deploying docker image ....'
                     sh 'kubectl create deployment nginx-deployment --image=nginx'
                 }               
                 
