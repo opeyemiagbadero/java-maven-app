@@ -5,5 +5,4 @@ script.groovy
 server-cmds.sh
 /src
 Dockerfile
-pom.xml
 pipeine{.groovy
