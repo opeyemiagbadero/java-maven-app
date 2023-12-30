@@ -1,0 +1,8 @@
+/target
+/idea*
+docker-compose.yaml
+script.groovy
+server-cmds.sh
+/src
+Dockerfile
+pipeine{.groovy

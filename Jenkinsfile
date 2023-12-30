@@ -1,52 +1,38 @@
-#!/usr/bin/env groovy
-
-@Library('jenkins-shared-library')
-def gv
-
 pipeline {
     agent any
-    tools {
-        maven 'maven-3.6'
-    }
+
     stages {
-        stage ("init") {
+        stage('Build app') {
             steps {
-                // groovy script initialization
                 script {
-                    gv = load "script.groovy"
-                }
-            }
-        }
-        stage('build jar') {
-            steps {
-                // Your build steps go here
-                script {
-                    buildJar()
-
-                }
+                    echo 'Building the application...'
+                }                              
             }
         }
 
-        stage('build and push image') {
-    steps {
-        script {
-            buildImage 'opeyemiagbadero/demo-app:jma-5.0'
-            dockerLogin()
-            dockerPush 'opeyemiagbadero/demo-app:jma-5.0'
-
+        stage('build image') {
+            steps {
+                script {
+                    echo 'Building the docker image'
+                }                               
+            }
         }
-    }
-}
 
         stage('Deploy') {
+            environment {
+                AWS_ACCESS_KEY_ID = credentials ('jenkins_aws_access_key_id')
+                AWS_SECRET_ACCESS_KEY =credentials ('jenkins_aws_secret_access_key')
+            }
             steps {
-                // Your deployment steps go here
                 script {
-                    gv.deployApp()
-                }              
+                    echo 'Deploying docker image ...'
+                    sh 'kubectl create deployment nginx-deployment --image=nginx'
+                }               
+                
             }
         }
     }
+
     post {
         success {
             echo 'Pipeline succeeded! Send notifications, etc.'
