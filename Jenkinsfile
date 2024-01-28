@@ -10,7 +10,7 @@ pipeline {
                         sh 'scp -o StrictHostKeyChecking=no ansible/* ubuntu@3.8.22.26:/home/ubuntu/'
 
                         withCredentials([sshUserPrivateKey(credentialsId: "ec2-server-key", keyFileVariable: 'keyfile', usernameVariable: 'user' )]) {                            
-                            sh 'scp -o StrictHostKeyChecking=no $keyfile ubuntu@3.8.22.26:/home/ubuntu/docker-server.pem'
+                            sh 'scp -o StrictHostKeyChecking=no $keyfile ubuntu@3.8.22.26:/home/ubuntu/docker-servers.pem'
                         }
                     }
                 }                              
