@@ -1,0 +1,39 @@
+---
+- name: install pyhton 3 and docker
+  hosts: docker_server
+  become: yes
+  tasks: 
+    - name: install python3 and docker
+      vars:
+        ansible_python_interpreter: /usr/bin/python      
+      yum:
+        name: 
+          - pip
+          - docker
+        update_cache: yes
+        state: present
+
+- name: install docker compose
+  hosts: docker_server
+  become: yes
+  tasks:
+    - name: install docker-compose
+      get_url: 
+        url: https://github.com/docker/compose/releases/download/1.27.4/docker-compose-Linux-{{lookup ('pipe', 'uname -m')}}
+        dest: /usr/local/bin/docker-compose
+        mode: +x
+
+- name: start docker
+  hosts: docker_server
+  become: yes
+  tasks:
+    - name: start docker daemon 
+      systemd:
+        name: docker
+        state: started
+    - name:  Install docker python module
+      pip: 
+        name:
+          - docker
+          - docker-compose
+        # executable: pip

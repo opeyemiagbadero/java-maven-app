@@ -2,35 +2,20 @@ pipeline {
     agent any
 
     stages {
-        stage('Build app') {
+        stage("copy files to ansible server") {
             steps {
                 script {
-                    echo 'Building the application...'
+                    echo "copy all neccesary files to ansible control node"
+                    sshagent(['ansible-server-key']) {
+                        sh "scp -o StrictHostKeyChecking=no ansible/* root@13.40.118.238:/ubuntu"
+
+                        withCredentials([sshUserPrivateKey(credentialsId: "ec2-server-key", keyFileVariable: 'keyfile', usernameVariable: 'user' )]) {
+                            sh "scp ${keyfile} root@13.40.118.238:/ubuntu/docker-server.pem"
+                        }
+                    }
                 }                              
             }
-        }
-
-        stage('build image') {
-            steps {
-                script {
-                    echo 'Building the docker image'
-                }                               
-            }
-        }
-
-        stage('Deploy') {
-            environment {
-                AWS_ACCESS_KEY_ID = credentials ('jenkins_aws_access_key_id')
-                AWS_SECRET_ACCESS_KEY =credentials ('jenkins_aws_secret_access_key')
-            }
-            steps {
-                script {
-                    echo 'Deploying docker image ...'
-                    sh 'kubectl create deployment nginx-deployment --image=nginx'
-                }               
-                
-            }
-        }
+        }               
     }
 
     post {
