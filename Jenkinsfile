@@ -7,10 +7,10 @@ pipeline {
                 script {
                     echo "copy all neccesary files to ansible control node"
                     sshagent(['ansible-server-key']) {                        
-                        sh "sudo scp -o StrictHostKeyChecking=no ansible/* ubuntu@3.8.22.26:/ubuntu/"                       
+                        sh "scp -o StrictHostKeyChecking=no ansible/* ubuntu@3.8.22.26:/ubuntu/"                       
 
                         withCredentials([sshUserPrivateKey(credentialsId: "ec2-server-key", keyFileVariable: 'keyfile', usernameVariable: 'user' )]) {                            
-                            sh "sudo scp ${keyfile} ubuntu@3.8.22.26:/ubuntu/docker-server.pem"
+                            sh "scp ${keyfile} ubuntu@3.8.22.26:/ubuntu/docker-server.pem"
                         }
                     }
                 }                              
