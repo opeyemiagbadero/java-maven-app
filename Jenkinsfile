@@ -9,9 +9,9 @@ pipeline {
                     sshagent(['ansible-server-key']) {
                         
                         //sh "sudo scp -o StrictHostKeyChecking=no ansible/* ubuntu@3.8.22.26:/ubuntu/"
+                        sh "ssh -i "docker-server.pem" ubuntu@ec2-3-8-22-26.eu-west-2.compute.amazonaws.com"
 
-                        withCredentials([sshUserPrivateKey(credentialsId: "ec2-server-key", keyFileVariable: 'keyfile', usernameVariable: 'user' )]) {
-                            sh "ssh -i "docker-server.pem" ubuntu@ec2-3-8-22-26.eu-west-2.compute.amazonaws.com"
+                        withCredentials([sshUserPrivateKey(credentialsId: "ec2-server-key", keyFileVariable: 'keyfile', usernameVariable: 'user' )]) {                            
                             //sh "sudo scp ${keyfile} ubuntu@3.8.22.26:/ubuntu/docker-server.pem"
                         }
                     }
