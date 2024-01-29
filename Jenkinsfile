@@ -13,7 +13,7 @@ pipeline {
                         sh "scp -o StrictHostKeyChecking=no ansible/* ubuntu@${ANSIBLE_SERVER}/home/ubuntu"                       
 
                         withCredentials([sshUserPrivateKey(credentialsId: "ec2-server-key", keyFileVariable: 'keyfile', usernameVariable: 'user')]) {                            
-                            sh 'scp $keyfile ubuntu@${ANSIBLE_SERVER}:/home/ubuntu/ssh-key.pem'
+                            sh 'scp $keyfile ubuntu@$ANSIBLE_SERVER:/home/ubuntu/ssh-key.pem'
                         }
                     }
                 }                              
@@ -25,7 +25,7 @@ pipeline {
                     echo "calling ansible playbook to configure ec2 instances"
                     def remote = [:]
                     remote.name = "ansible-server"
-                    remote.host = "18.171.249.10"
+                    remote.host = ANSIBLE_SERVER
                     remote.allowAnyHosts = true
                     withCredentials([sshUserPrivateKey(credentialsId: "ansible-server-key", keyFileVariable: 'keyfile', usernameVariable: 'user')]) {
                         remote.user = user
