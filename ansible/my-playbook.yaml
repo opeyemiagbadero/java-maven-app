@@ -1,6 +1,6 @@
 ---
 - name: install pyhton 3 and docker
-  hosts: all
+  hosts: aws_ec2
   become: yes
   tasks: 
     - name: install python3 and docker
@@ -14,7 +14,7 @@
         state: present
 
 - name: install docker compose
-  hosts: all
+  hosts: aws_ec2
   become: yes
   tasks:
     - name: install docker-compose
@@ -24,7 +24,7 @@
         mode: +x
 
 - name: start docker
-  hosts: all
+  hosts: aws_ec2
   become: yes
   tasks:
     - name: start docker daemon 
@@ -37,3 +37,5 @@
           - docker
           - docker-compose
         # executable: pip
+
+        
